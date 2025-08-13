@@ -29,6 +29,9 @@ const registerValidation = [
     .trim()
     .isLength({ min: 2, max: 50 })
     .withMessage('Last name must be between 2 and 50 characters'),
+  body('captchaToken')
+    .notEmpty()
+    .withMessage('CAPTCHA verification is required'),
   handleValidationErrors
 ];
 
@@ -40,6 +43,9 @@ const loginValidation = [
   body('password')
     .notEmpty()
     .withMessage('Password is required'),
+  body('captchaToken')
+    .notEmpty()
+    .withMessage('CAPTCHA verification is required'),
   handleValidationErrors
 ];
 

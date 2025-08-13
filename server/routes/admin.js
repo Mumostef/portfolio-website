@@ -445,6 +445,14 @@ router.put('/withdrawals/:id', asyncHandler(async (req, res) => {
     const withdrawal = withdrawalResult.rows[0];
 
     if (action === 'approve') {
+      // Check if this is a Stripe withdrawal (not yet supported)
+      if (withdrawal.method === 'stripe') {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ 
+          error: 'Stripe payouts are not yet implemented. Please reject this request or implement Stripe Connect first.' 
+        });
+      }
+
       // Process payment
       let paymentResult;
       const paymentDetails = withdrawal.payment_details;
@@ -455,15 +463,6 @@ router.put('/withdrawals/:id', asyncHandler(async (req, res) => {
           paymentDetails.email,
           parseFloat(withdrawal.amount)
         );
-      } else if (withdrawal.method === 'stripe') {
-        // TODO: Stripe payouts require user's connected account ID
-        // For now, we'll simulate success but this needs proper implementation
-        // paymentResult = await processStripePayout(withdrawalId, accountId, parseFloat(withdrawal.amount));
-        console.warn(`Stripe payout attempted for withdrawal ${withdrawalId} but not implemented - requires Stripe Connect setup`);
-        paymentResult = { 
-          success: false, 
-          error: 'Stripe payouts not fully implemented - requires connected account setup' 
-        };
       }
 
       if (paymentResult.success) {
