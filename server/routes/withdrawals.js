@@ -8,7 +8,7 @@ const { processStripePayout } = require('../services/paymentService');
 
 const router = express.Router();
 
-const { MINIMUM_WITHDRAWAL } = require('../config/constants');
+const { MINIMUM_WITHDRAWAL, WITHDRAWAL_FEE_PERCENTAGE } = require('../config/constants');
 
 // Get user's withdrawal history
 router.get('/', asyncHandler(async (req, res) => {
@@ -178,11 +178,12 @@ router.get('/info', asyncHandler(async (req, res) => {
     availableBalance: availableBalance,
     pendingAmount: pendingAmount,
     minimumWithdrawal: MINIMUM_WITHDRAWAL,
+    withdrawalFeePercentage: WITHDRAWAL_FEE_PERCENTAGE,
     supportedMethods: ['paypal', 'stripe'],
     processingTime: '1-3 business days',
     fees: {
-      paypal: '2% processing fee',
-      stripe: '2% processing fee'
+      paypal: `${(WITHDRAWAL_FEE_PERCENTAGE * 100).toFixed(0)}% processing fee`,
+      stripe: `${(WITHDRAWAL_FEE_PERCENTAGE * 100).toFixed(0)}% processing fee`
     }
   });
 }));

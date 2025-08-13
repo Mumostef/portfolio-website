@@ -70,7 +70,7 @@ const surveyValidation = [
   handleValidationErrors
 ];
 
-const MINIMUM_WITHDRAWAL = parseFloat(process.env.MINIMUM_WITHDRAWAL) || 5.00;
+const { MINIMUM_WITHDRAWAL } = require('../config/constants');
 
 const withdrawalValidation = [
   body('amount')

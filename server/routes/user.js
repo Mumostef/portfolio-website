@@ -66,21 +66,33 @@ router.get('/earnings', asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
   const offset = (page - 1) * limit;
+  const type = req.query.type;
+
+  let whereClause = 'eh.user_id = $1';
+  let params = [req.user.id, limit, offset];
+  let countParams = [req.user.id];
+
+  if (type) {
+    whereClause += ' AND eh.type = $4';
+    params.push(type);
+    countParams.push(type);
+  }
 
   const result = await pool.query(
     `SELECT eh.*, s.title as survey_title
      FROM earnings_history eh
      LEFT JOIN surveys s ON eh.reference_id = s.id AND eh.type = 'survey'
-     WHERE eh.user_id = $1
+     WHERE ${whereClause}
      ORDER BY eh.created_at DESC
      LIMIT $2 OFFSET $3`,
-    [req.user.id, limit, offset]
+    params
   );
 
-  const countResult = await pool.query(
-    'SELECT COUNT(*) FROM earnings_history WHERE user_id = $1',
-    [req.user.id]
-  );
+  const countQuery = type 
+    ? 'SELECT COUNT(*) FROM earnings_history WHERE user_id = $1 AND type = $2'
+    : 'SELECT COUNT(*) FROM earnings_history WHERE user_id = $1';
+
+  const countResult = await pool.query(countQuery, countParams);
 
   const earnings = result.rows.map(row => ({
     id: row.id,

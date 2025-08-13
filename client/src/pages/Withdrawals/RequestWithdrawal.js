@@ -95,7 +95,8 @@ const RequestWithdrawal = () => {
   }
 
   const calculateFee = (amount) => {
-    return amount * 0.02; // 2% fee
+    const feePercentage = withdrawalInfo?.withdrawalFeePercentage || 0.02;
+    return amount * feePercentage;
   };
 
   const netAmount = watchAmount ? parseFloat(watchAmount) - calculateFee(parseFloat(watchAmount)) : 0;
@@ -302,7 +303,7 @@ const RequestWithdrawal = () => {
                             <span>${parseFloat(watchAmount).toFixed(2)}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Processing fee (2%):</span>
+                            <span>Processing fee ({((withdrawalInfo?.withdrawalFeePercentage || 0.02) * 100).toFixed(0)}%):</span>
                             <span>-${calculateFee(parseFloat(watchAmount)).toFixed(2)}</span>
                           </div>
                           <div className="border-t border-blue-300 pt-1 flex justify-between font-medium">
