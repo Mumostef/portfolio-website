@@ -51,9 +51,8 @@ const AdminSurveys = () => {
 
   const handleToggleActive = async (surveyId, currentStatus) => {
     try {
-      await axios.put(`/admin/surveys/${surveyId}`, {
-        isActive: !currentStatus,
-        // We need to send all required fields, so we'll get the survey first
+      await axios.put(`/admin/surveys/${surveyId}/status`, {
+        isActive: !currentStatus
       });
       toast.success(`Survey ${!currentStatus ? 'activated' : 'deactivated'} successfully`);
       fetchSurveys();

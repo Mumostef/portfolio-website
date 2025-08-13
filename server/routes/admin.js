@@ -292,6 +292,23 @@ router.post('/surveys', surveyValidation, asyncHandler(async (req, res) => {
   });
 }));
 
+// Update survey status (toggle active/inactive)
+router.put('/surveys/:id/status', asyncHandler(async (req, res) => {
+  const surveyId = parseInt(req.params.id);
+  const { isActive } = req.body;
+
+  const result = await pool.query(
+    'UPDATE surveys SET is_active = $1 WHERE id = $2 RETURNING id',
+    [isActive, surveyId]
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ error: 'Survey not found' });
+  }
+
+  res.json({ message: `Survey ${isActive ? 'activated' : 'deactivated'} successfully` });
+}));
+
 // Update survey
 router.put('/surveys/:id', surveyValidation, asyncHandler(async (req, res) => {
   const surveyId = parseInt(req.params.id);
