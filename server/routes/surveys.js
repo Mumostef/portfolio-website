@@ -9,31 +9,51 @@ router.get('/', asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
+  const search = req.query.search || '';
+
+  let whereClause = `s.is_active = true 
+     AND (s.max_completions IS NULL OR s.current_completions < s.max_completions)
+     AND s.id NOT IN (
+       SELECT survey_id FROM survey_completions WHERE user_id = $1
+     )`;
+  
+  let params = [req.user.id, limit, offset];
+  let countParams = [req.user.id];
+
+  if (search) {
+    whereClause += ` AND (s.title ILIKE $4 OR s.description ILIKE $4)`;
+    params.push(`%${search}%`);
+    countParams.push(`%${search}%`);
+  }
 
   // Get surveys that user hasn't completed yet
   const result = await pool.query(
     `SELECT s.id, s.title, s.description, s.reward_amount, s.estimated_time, s.current_completions, s.max_completions
      FROM surveys s
-     WHERE s.is_active = true 
-     AND (s.max_completions IS NULL OR s.current_completions < s.max_completions)
-     AND s.id NOT IN (
-       SELECT survey_id FROM survey_completions WHERE user_id = $1
-     )
+     WHERE ${whereClause}
      ORDER BY s.reward_amount DESC, s.created_at DESC
      LIMIT $2 OFFSET $3`,
-    [req.user.id, limit, offset]
+    params
   );
 
-  const countResult = await pool.query(
-    `SELECT COUNT(*) 
-     FROM surveys s
-     WHERE s.is_active = true 
-     AND (s.max_completions IS NULL OR s.current_completions < s.max_completions)
-     AND s.id NOT IN (
-       SELECT survey_id FROM survey_completions WHERE user_id = $1
-     )`,
-    [req.user.id]
-  );
+  const countQuery = search 
+    ? `SELECT COUNT(*) 
+       FROM surveys s
+       WHERE s.is_active = true 
+       AND (s.max_completions IS NULL OR s.current_completions < s.max_completions)
+       AND s.id NOT IN (
+         SELECT survey_id FROM survey_completions WHERE user_id = $1
+       )
+       AND (s.title ILIKE $2 OR s.description ILIKE $2)`
+    : `SELECT COUNT(*) 
+       FROM surveys s
+       WHERE s.is_active = true 
+       AND (s.max_completions IS NULL OR s.current_completions < s.max_completions)
+       AND s.id NOT IN (
+         SELECT survey_id FROM survey_completions WHERE user_id = $1
+       )`;
+
+  const countResult = await pool.query(countQuery, countParams);
 
   const surveys = result.rows.map(row => ({
     id: row.id,

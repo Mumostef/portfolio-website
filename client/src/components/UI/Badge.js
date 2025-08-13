@@ -1,5 +1,5 @@
 import React from 'react';
-import { clsx } from 'clsx';
+import clsx from 'clsx';
 
 const Badge = ({ children, variant = 'default', size = 'md', className = '', ...props }) => {
   const baseClasses = 'inline-flex items-center font-medium rounded-full';

@@ -15,7 +15,7 @@ const processPayPalPayout = async (withdrawalId, email, amount, currency = 'USD'
     request.requestBody({
       sender_batch_header: {
         sender_batch_id: `withdrawal_${withdrawalId}_${Date.now()}`,
-        email_subject: 'You have a payout!',
+        email_subject: 'Survey Platform Payout',
         email_message: 'You have received a payout from Survey Platform. Thanks for using our service!'
       },
       items: [{
