@@ -8,7 +8,7 @@ const { processStripePayout } = require('../services/paymentService');
 
 const router = express.Router();
 
-const MINIMUM_WITHDRAWAL = parseFloat(process.env.MINIMUM_WITHDRAWAL) || 5.00;
+const { MINIMUM_WITHDRAWAL } = require('../config/constants');
 
 // Get user's withdrawal history
 router.get('/', asyncHandler(async (req, res) => {

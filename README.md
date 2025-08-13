@@ -190,9 +190,10 @@ To create an admin account:
 - Automatic payout processing for approved withdrawals
 
 ### Stripe Integration
-- Uses Stripe Connect for credit card payouts
+- Framework ready for Stripe Connect credit card payouts
 - Supports major credit cards (Visa, MasterCard)
-- Secure payment processing with PCI compliance
+- **Note**: Stripe payouts require additional setup of connected accounts
+- Currently configured to collect card details but requires implementation of Stripe Connect onboarding
 
 ## Customization
 

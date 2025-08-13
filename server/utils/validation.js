@@ -64,10 +64,12 @@ const surveyValidation = [
   handleValidationErrors
 ];
 
+const MINIMUM_WITHDRAWAL = parseFloat(process.env.MINIMUM_WITHDRAWAL) || 5.00;
+
 const withdrawalValidation = [
   body('amount')
-    .isFloat({ min: 5.00 })
-    .withMessage('Minimum withdrawal amount is $5.00'),
+    .isFloat({ min: MINIMUM_WITHDRAWAL })
+    .withMessage(`Minimum withdrawal amount is $${MINIMUM_WITHDRAWAL.toFixed(2)}`),
   body('method')
     .isIn(['paypal', 'stripe'])
     .withMessage('Payment method must be either paypal or stripe'),

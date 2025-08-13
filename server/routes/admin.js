@@ -456,9 +456,13 @@ router.put('/withdrawals/:id', asyncHandler(async (req, res) => {
           parseFloat(withdrawal.amount)
         );
       } else if (withdrawal.method === 'stripe') {
-        // For Stripe, you'd need the user's connected account ID
-        // This is a simplified version
-        paymentResult = { success: true, transactionId: 'stripe_' + Date.now() };
+        // TODO: Stripe payouts require user's connected account ID
+        // For now, we'll simulate success but this needs proper implementation
+        // paymentResult = await processStripePayout(withdrawalId, accountId, parseFloat(withdrawal.amount));
+        paymentResult = { 
+          success: false, 
+          error: 'Stripe payouts not fully implemented - requires connected account setup' 
+        };
       }
 
       if (paymentResult.success) {
