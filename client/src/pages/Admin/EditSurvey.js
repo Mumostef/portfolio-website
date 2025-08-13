@@ -30,7 +30,9 @@ const EditSurvey = () => {
     handleSubmit,
     formState: { errors },
     watch,
-    reset
+    reset,
+    setValue,
+    getValues
   } = useForm();
 
   const { fields, append, remove, replace } = useFieldArray({
@@ -115,18 +117,16 @@ const EditSurvey = () => {
   };
 
   const addOption = (questionIndex) => {
-    const currentOptions = watch(`questions.${questionIndex}.options`) || [];
+    const currentOptions = getValues(`questions.${questionIndex}.options`) || [];
     const updatedOptions = [...currentOptions, ''];
-    const questions = watch('questions');
-    questions[questionIndex].options = updatedOptions;
+    setValue(`questions.${questionIndex}.options`, updatedOptions);
   };
 
   const removeOption = (questionIndex, optionIndex) => {
-    const currentOptions = watch(`questions.${questionIndex}.options`) || [];
+    const currentOptions = getValues(`questions.${questionIndex}.options`) || [];
     if (currentOptions.length > 1) {
       const updatedOptions = currentOptions.filter((_, index) => index !== optionIndex);
-      const questions = watch('questions');
-      questions[questionIndex].options = updatedOptions;
+      setValue(`questions.${questionIndex}.options`, updatedOptions);
     }
   };
 

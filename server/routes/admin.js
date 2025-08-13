@@ -459,6 +459,7 @@ router.put('/withdrawals/:id', asyncHandler(async (req, res) => {
         // TODO: Stripe payouts require user's connected account ID
         // For now, we'll simulate success but this needs proper implementation
         // paymentResult = await processStripePayout(withdrawalId, accountId, parseFloat(withdrawal.amount));
+        console.warn(`Stripe payout attempted for withdrawal ${withdrawalId} but not implemented - requires Stripe Connect setup`);
         paymentResult = { 
           success: false, 
           error: 'Stripe payouts not fully implemented - requires connected account setup' 

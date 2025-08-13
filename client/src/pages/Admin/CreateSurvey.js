@@ -24,7 +24,9 @@ const CreateSurvey = () => {
     control,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
+    setValue,
+    getValues
   } = useForm({
     defaultValues: {
       questions: [
@@ -91,19 +93,16 @@ const CreateSurvey = () => {
   };
 
   const addOption = (questionIndex) => {
-    const currentOptions = watch(`questions.${questionIndex}.options`) || [];
+    const currentOptions = getValues(`questions.${questionIndex}.options`) || [];
     const updatedOptions = [...currentOptions, ''];
-    // Update the form value
-    const questions = watch('questions');
-    questions[questionIndex].options = updatedOptions;
+    setValue(`questions.${questionIndex}.options`, updatedOptions);
   };
 
   const removeOption = (questionIndex, optionIndex) => {
-    const currentOptions = watch(`questions.${questionIndex}.options`) || [];
+    const currentOptions = getValues(`questions.${questionIndex}.options`) || [];
     if (currentOptions.length > 1) {
       const updatedOptions = currentOptions.filter((_, index) => index !== optionIndex);
-      const questions = watch('questions');
-      questions[questionIndex].options = updatedOptions;
+      setValue(`questions.${questionIndex}.options`, updatedOptions);
     }
   };
 
